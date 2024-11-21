@@ -1,11 +1,8 @@
 # Reusable vars
 x-var:
-  - &POSTGRES_USER
-    postgres
-  - &POSTGRES_PASSWORD
-    default
-  - &POSTGRES_DATABASE
-    postgres
+  - &POSTGRES_USER postgres
+  - &POSTGRES_PASSWORD default
+  - &POSTGRES_DATABASE postgres
 
 # Reusable envars for postgres
 x-postgres-vars: &postgres-vars
@@ -92,9 +89,12 @@ services:
       BACKEND_URL: http://backend:3000
       LOG_LEVEL: info
     ports: ["3005:3000"]
-    volumes: ["./frontend/Caddyfile:/etc/caddy/Caddyfile"]
+    volumes:
+      - ./frontend/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy-data:/data
+      - ./caddy-config:/config
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api"]
     depends_on:
       backend:
         condition: service_healthy
